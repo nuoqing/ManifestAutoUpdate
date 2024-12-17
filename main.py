@@ -5,6 +5,7 @@ import re
 import argparse
 from reptile import ManifestAutoUpdate, result_data, dlc
 from steam.utils.tools import upload_aliyun, encrypt
+from steam.utils.pan import upload_file_pan
 from steam.client.cdn import temp, CDNClient
 
 def delete_files(folder_path):
@@ -107,14 +108,16 @@ def end(app_id, json_data):
             for file in files:
                 if file.endswith(".manifest"):
                     manifest_path = os.path.join(root, file)
-                    upload_file(manifest_path, f"depotcache/{app_id}/{file}")
+                    #upload_file(manifest_path, f"depotcache/{app_id}/{file}")
+                    upload_file_pan(app_id=app_id,file_path=manifest_path,flag=True,getKey=False)
                     fc.write(file.replace(".manifest", "") + "\n")
 
     logging.info(f"{app_id}_cache.txt written successfully")
 
     # 上传结果文件
     if os.path.exists(result_path):
-        upload_file(result_path, f"gKeyConfig/{app_id}.txt")
+        #upload_file(result_path, f"gKeyConfig/{app_id}.txt")
+        upload_file_pan(app_id=app_id,file_path=result_path,flag=False,getKey=True)
     
     # 判断data/depots/{app_id}路径下是否有.manifest结尾的文件
     # for root, dirs, files in os.walk(f"data/depots/{app_id}"):
@@ -122,8 +125,9 @@ def end(app_id, json_data):
     #         if file.endswith(".manifest"):
     #             upload_file(app_id_cache_path, f"depotcache/{app_id}/{app_id}.txt")
     #             cleanup_temp_files([app_id_cache_path])
-    # if os.path.exists(app_id_cache_path):
-        upload_file(app_id_cache_path, f"depotcache/{app_id}/{app_id}.txt")
+    if os.path.exists(app_id_cache_path):
+        #upload_file(app_id_cache_path, f"depotcache/{app_id}/{app_id}.txt")
+        upload_file_pan(app_id=app_id,file_path=app_id_cache_path,flag=False,getKey=False)
         cleanup_temp_files([app_id_cache_path])
     # upload_file(result_path, f"gKeyConfig/{app_id}.txt")
     # upload_file(app_id_cache_path, f"depotcache/{app_id}/{app_id}.txt")
